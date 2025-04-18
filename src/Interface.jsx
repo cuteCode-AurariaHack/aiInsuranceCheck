@@ -1,29 +1,47 @@
-import React, { useState } from 'react'
-
+import React, { useState } from 'react';
+import axios from 'axios';
 
 const Interface = () => {
   const [messages, setMessages] = useState([
     { sender: 'bot', text: 'Hello! How can I help you today?' },
-  ])
-  const [input, setInput] = useState('')
+  ]);
+  const [input, setInput] = useState('');
 
-  const sendMessage = () => {
-    if (!input.trim()) return
+  const sendMessage = async () => {
+    if (!input.trim()) return;
 
-    const userMessage = { sender: 'user', text: input }
-    const botMessage = {
-      sender: 'bot',
-      text: generateBotReply(input),
+    // User message
+    const userMessage = { sender: 'user', text: input };
+
+    // Temporarily add the user message to UI
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+    try {
+      // Send the message to the backend using Axios
+      const response = await axios.post('http://localhost:8080/api/chat', {
+        message: input,
+      });
+
+      
+      const botMessage = {
+        sender: 'bot',
+        text: response.data.response, 
+      };
+
+      // Add the bot message to the chat UI
+      setMessages((prevMessages) => [...prevMessages, botMessage]);
+
+      // Clear the input field
+      setInput('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage = {
+        sender: 'bot',
+        text: "Sorry, I couldn't process your request. Please try again.",
+      };
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
     }
-
-    setMessages((prevMessages) => [...prevMessages, userMessage, botMessage])
-    setInput('')
-  }
-
-  const generateBotReply = (inputText) => {
-    // For now, just returns a generic message — can customize this later
-    return "I'm just a simple bot, but I'm here to help!"
-  }
+  };
 
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-100">
@@ -64,7 +82,7 @@ const Interface = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Interface
+export default Interface;
