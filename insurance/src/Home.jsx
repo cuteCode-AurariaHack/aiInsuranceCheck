@@ -1,6 +1,7 @@
 import React from 'react'
 import Button from './Button'
 import Logo from './images/Logo.png'
+import Buttons from './Buttons'
 const Home = () => {
 
   return (
@@ -15,6 +16,11 @@ const Home = () => {
               className="md:w-80 md:h-16 w-60 h-12"
               id="counter"
             />
+       <Buttons
+       text="Open Playground"
+       className="md:w-80 md:h-16 w-60 h-12"
+       id="counter"
+     />
     </div>
   )
 }
